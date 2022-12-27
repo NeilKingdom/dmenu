@@ -1,23 +1,37 @@
-/* See LICENSE file for copyright and license details. */
-/* Default settings; can be overriden by command line. */
-
-static int topbar = 1;                      /* -b  option; if 0, dmenu appears at bottom     */
-/* -fn option overrides fonts[0]; default X11 font or font set */
-static const char *fonts[] = {
-	"monospace:size=10"
-};
-static const char *prompt      = NULL;      /* -p  option; prompt to the left of input field */
-static const char *colors[SchemeLast][2] = {
-	/*     fg         bg       */
-	[SchemeNorm] = { "#bbbbbb", "#222222" },
-	[SchemeSel] = { "#eeeeee", "#005577" },
-	[SchemeOut] = { "#000000", "#00ffff" },
-};
-/* -l option; if nonzero, dmenu uses vertical list with given number of lines */
-static unsigned int lines      = 0;
+/*
+   Equivallent to setting dmenu's -b option.
+   Expands list from bottom of screen if set to 0.
+   Expands list from top of screen if set to 1.
+*/
+static int topbar = 1;
 
 /*
- * Characters not considered part of a word while deleting words
- * for example: " /?\"&[]"
- */
+   Equivallent to setting dmenu's -fn option.
+   Setting -fn on the command line overrides fonts
+   defined here. Additional fonts proceeding the
+   primary font are used as fallbacks.
+*/
+static const char *fonts[] = {
+	"Terminus:pixelsize=14",
+   "NotoColorEmoji:pixelsize=14:antialias=true:autohint=true",
+};
+
+/* Equivallent to setting dmenu's -p  option */
+static const char *prompt = NULL;
+static const char *colors[SchemeLast][2] = {
+/*                  FG         BG       */
+	[SchemeNorm] = { "#BBBBBB", "#222222" },
+	[SchemeSel]  = { "#EEEEEE", "#005577" },
+	[SchemeOut]  = { "#000000", "#00FFFF" },
+};
+/*
+   Equivallent to setting dmenu's -l option.
+   If non-zero, dmenu uses vertical list with given number of lines.
+*/
+static unsigned int lines = 0;
+
+/*
+   Characters not considered part of a word while
+   deleting words. For example: " /?\"&[]"
+*/
 static const char worddelimiters[] = " ";
