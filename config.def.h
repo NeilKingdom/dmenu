@@ -12,8 +12,8 @@ static int topbar = 1;
    primary font are used as fallbacks.
 */
 static const char *fonts[] = {
-	"Terminus:pixelsize=14",
-   "NotoColorEmoji:pixelsize=14:antialias=true:autohint=true",
+	"Terminus:size=28:antialias=true:autohint=true",
+   "Noto Color Emoji:size=28:antialias=true:autohint=true",
 };
 
 /* Equivallent to setting dmenu's -p  option */
@@ -24,6 +24,7 @@ static const char *colors[SchemeLast][2] = {
 	[SchemeSel]  = { "#EEEEEE", "#005577" },
 	[SchemeOut]  = { "#000000", "#00FFFF" },
 };
+
 /*
    Equivallent to setting dmenu's -l option.
    If non-zero, dmenu uses vertical list with given number of lines.
@@ -35,3 +36,6 @@ static unsigned int lines = 0;
    deleting words. For example: " /?\"&[]"
 */
 static const char worddelimiters[] = " ";
+
+/* Size of the window border */
+static unsigned int border_width = 5;
