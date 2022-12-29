@@ -224,7 +224,7 @@ drawmenu(void)
       int i = 0;
       for (item = curr; item != next; item = item->right, i++)
       {
-         drawitem(item, x + ((i / lines) * ((mw - x) / columns)),
+         drawitem(item, x + ((i / lines) * ((mw - x) / columns)) - promptw,
                   y + (((i % lines) + 1) * bh), (mw - x) / columns);
       }
 	} else if (matches) {
