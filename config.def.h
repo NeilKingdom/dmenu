@@ -19,10 +19,13 @@ static const char *fonts[] = {
 /* Equivallent to setting dmenu's -p  option */
 static const char *prompt = NULL;
 static const char *colors[SchemeLast][2] = {
-/*                  FG         BG       */
-	[SchemeNorm] = { "#BBBBBB", "#222222" },
-	[SchemeSel]  = { "#EEEEEE", "#005577" },
-	[SchemeOut]  = { "#000000", "#00FFFF" },
+/*                              FG         BG       */
+	[SchemeNorm]            = { "#BBBBBB", "#222222" },
+	[SchemeSel]             = { "#EEEEEE", "#005577" },
+   [SchemeSelHighlight]    = { "#FFC978", "#005577" },
+   [SchemeNormHighlight]   = { "#FFC978", "#222222" },
+	[SchemeOut]             = { "#000000", "#00FFFF" },
+   [SchemeOutHighlight]    = { "#FFC978", "#00FFFF" },
 };
 
 /*
