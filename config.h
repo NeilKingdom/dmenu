@@ -26,10 +26,11 @@ static const char *colors[SchemeLast][2] = {
 };
 
 /*
-   Equivallent to setting dmenu's -l option.
-   If non-zero, dmenu uses vertical list with given number of lines.
+   Equivallent to setting dmenu's -l and -g options (-g added with grid patch).
+   If non-zero, dmenu displays "lines" number of rows, and "columns" number of columns.
 */
-static unsigned int lines = 0;
+static unsigned int lines   = 6;
+static unsigned int columns = 4;
 
 /*
    Characters not considered part of a word while
