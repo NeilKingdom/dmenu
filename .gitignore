@@ -1,3 +1,5 @@
+dmenu_run
+dmenu_path
 config.h
 *.rej
 *.orig

@@ -9,11 +9,13 @@ static int topbar = 1;
    Equivallent to setting dmenu's -fn option.
    Setting -fn on the command line overrides fonts
    defined here. Additional fonts proceeding the
-   primary font are used as fallbacks.
+   primary font are used as fallbacks. See my ST
+   config.def.h for more info on the specific
+   fonts that were chosen.
 */
-static const char *fonts[] = {
-	"Terminus:size=32:antialias=true:autohint=true",
-   "Noto Color Emoji:size=32:antialias=true:autohint=true",
+static const char *fonts[2] = {
+	"Terminus:style=Bold:size=14:antialias=true",
+   "JoyPixels:style=Regular:pixelsize=14"
 };
 
 /* Equivallent to setting dmenu's -p  option */
