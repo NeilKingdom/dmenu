@@ -1,5 +1,7 @@
+dmenu
 dmenu_run
 dmenu_path
+stest
 config.h
 *.rej
 *.orig
