@@ -14,20 +14,20 @@ static int topbar = 1;
    fonts that were chosen.
 */
 static const char *fonts[2] = {
-	"Terminus:style=Bold:size=14:antialias=true",
-   "Noto Color Emoji:style=Regular:pixelsize=14"
+    "Terminess Nerd Font:style=Regular:size=14",
+    "Noto Color Emoji:style=Regular:pixelsize=12"
 };
 
 /* Equivallent to setting dmenu's -p  option */
-static const char *prompt = NULL;
+static const char *prompt = "Select a program to run:";
 static const char *colors[SchemeLast][2] = {
-/*                              FG         BG       */
-	[SchemeNorm]            = { "#BBBBBB", "#222222" },
-	[SchemeSel]             = { "#EEEEEE", "#005577" },
-   [SchemeSelHighlight]    = { "#FFC978", "#005577" },
-   [SchemeNormHighlight]   = { "#FFC978", "#222222" },
-	[SchemeOut]             = { "#000000", "#00FFFF" },
-   [SchemeOutHighlight]    = { "#FFC978", "#00FFFF" },
+    /*                          FG         BG       */
+    [SchemeNorm]            = { "#BBBBBB", "#222222" },
+    [SchemeSel]             = { "#EEEEEE", "#005577" },
+    [SchemeSelHighlight]    = { "#FFC978", "#005577" },
+    [SchemeNormHighlight]   = { "#FFC978", "#222222" },
+    [SchemeOut]             = { "#000000", "#00FFFF" },
+    [SchemeOutHighlight]    = { "#FFC978", "#00FFFF" },
 };
 
 /*
@@ -37,10 +37,7 @@ static const char *colors[SchemeLast][2] = {
 static unsigned int lines   = 6;
 static unsigned int columns = 4;
 
-/*
-   Characters not considered part of a word while
-   deleting words. For example: " /?\"&[]"
-*/
+/* Characters not considered part of a word when deleting words. Example: " /?\"&[]" */
 static const char worddelimiters[] = " ";
 
 /* Size of the window border */

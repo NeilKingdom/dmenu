@@ -1,7 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/Xlib.h>
+#include <X11/Xft/Xft.h>
+
 typedef struct {
-	Cursor cursor;
+    Cursor cursor;
 } Cur;
 
 typedef struct Fnt {
@@ -12,7 +15,7 @@ typedef struct Fnt {
 	struct Fnt *next;
 } Fnt;
 
-enum { ColFg, ColBg }; /* Clr scheme index */
+enum { ColFg, ColBg }; /* Color scheme index */
 typedef XftColor Clr;
 
 typedef struct {
