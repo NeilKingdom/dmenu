@@ -18,7 +18,7 @@ static const char *fonts[2] = {
     "Noto Color Emoji:style=Regular:pixelsize=12"
 };
 
-/* Equivallent to setting dmenu's -p  option */
+/* Equivallent to setting dmenu's -p option */
 static const char *prompt = "Select a program to run:";
 static const char *colors[SchemeLast][2] = {
     /*                          FG         BG       */

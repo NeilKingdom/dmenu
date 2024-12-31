@@ -111,12 +111,12 @@ static Fnt *xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
 
     if (fontname) {
         /*
-         * Using the pattern found at font->xfont->pattern does not yield the
-         * same substitution results as using the pattern returned by
-         * FcNameParse; using the latter results in the desired fallback
-         * behaviour whereas the former just results in missing-character
-         * rectangles being drawn, at least with some fonts.
-         */
+            Using the pattern found at font->xfont->pattern does not yield the
+            same substitution results as using the pattern returned by
+            FcNameParse; using the latter results in the desired fallback
+            behaviour whereas the former just results in missing-character
+            rectangles being drawn, at least with some fonts.
+        */
         if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
             fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
             return NULL;
@@ -186,8 +186,8 @@ void drw_clr_create(Drw *drw, Clr *dest, const char *clrname) {
         drw->dpy,
         DefaultVisual(drw->dpy, drw->screen),
         DefaultColormap(drw->dpy, drw->screen),
-        clrname, dest)
-    ) {
+        clrname, dest))
+    {
         die("error, cannot allocate color '%s'", clrname);
     }
 }
@@ -384,9 +384,7 @@ int drw_text(
             if (match) {
                 usedfont = xfont_create(drw, NULL, match);
                 if (usedfont && XftCharExists(drw->dpy, usedfont->xfont, utf8codepoint)) {
-                    for (curfont = drw->fonts; curfont->next; curfont = curfont->next) {
-                        ;
-                    }
+                    for (curfont = drw->fonts; curfont->next; curfont = curfont->next) ;
                     curfont->next = usedfont;
                 } else {
                     xfont_free(usedfont);
@@ -398,10 +396,7 @@ int drw_text(
         }
     }
 
-    if (d) {
-        XftDrawDestroy(d);
-    }
-
+    if (d) XftDrawDestroy(d);
     return x + (render ? w : 0);
 }
 
@@ -438,12 +433,8 @@ void drw_font_getexts(
     if (!font || !text) return;
 
     XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
-    if (w) {
-        *w = ext.xOff;
-    }
-    if (h) {
-        *h = font->h;
-    }
+    if (w) *w = ext.xOff;
+    if (h) *h = font->h;
 }
 
 Cur *drw_cur_create(Drw *drw, int shape) {

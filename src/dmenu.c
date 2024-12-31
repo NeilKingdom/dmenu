@@ -173,8 +173,7 @@ static void drawhighlights(struct item *item, int x, int y, int maxw) {
             if (indentx - (lrpad / 2) - 1 < maxw) {
                 drw_text(
                     drw,
-                    x + indentx - (lrpad / 2) - 1,
-                    y,
+                    x + indentx - (lrpad / 2) - 1, y,
                     MIN(maxw - indentx, TEXTW(highlight) - lrpad),
                     bh, 0, highlight, 0
                 );
@@ -242,15 +241,13 @@ static void drawmenu(void) {
     }
 
     recalculatenumbers();
-    if (lines > 0) {
-        /* Draw grid */
+    if (lines > 0) { /* Draw grid */
         int i = 0;
         for (item = curr; item != next; item = item->right, i++) {
             drawitem(item, x + ((i / lines) * ((mw - x) / columns)) - promptw,
-                     y + (((i % lines) + 1) * bh), (mw - x) / columns);
+                y + (((i % lines) + 1) * bh), (mw - x) / columns);
         }
-    } else if (matches) {
-        /* Draw horizontal list */
+    } else if (matches) { /* Draw horizontal list */
         x += inputw;
         w = TEXTW("<");
 
@@ -270,13 +267,14 @@ static void drawmenu(void) {
             drw_text(drw, mw - w - TEXTW(numbers), 0, w, bh, lrpad / 2, ">", 0);
         }
     }
+
     drw_setscheme(drw, scheme[SchemeNorm]);
     drw_text(drw, mw - TEXTW(numbers), 0, TEXTW(numbers), bh, lrpad / 2, numbers, 0);
     drw_map(drw, win, 0, 0, mw, mh);
 }
 
 static void grabfocus(void) {
-    struct timespec ts = { .tv_sec = 0, .tv_nsec = 10000000  };
+    struct timespec ts = { .tv_sec = 0, .tv_nsec = 10000000 };
     Window focuswin;
     int i, revertwin;
 
@@ -292,13 +290,13 @@ static void grabfocus(void) {
 }
 
 static void grabkeyboard(void) {
-    struct timespec ts = { .tv_sec = 0, .tv_nsec = 1000000  };
+    struct timespec ts = { .tv_sec = 0, .tv_nsec = 1000000 };
     int i;
 
     if (embed) return;
 
-    /* try to grab keyboard, we may have to wait for another process to ungrab */
-    for (i = 0; i < 1000; i++) {
+    /* Try to grab keyboard, we may have to wait for another process to ungrab */
+    for (i = 0; i < 1000; ++i) {
         if (XGrabKeyboard(dpy, DefaultRootWindow(dpy), True, GrabModeAsync,
             GrabModeAsync, CurrentTime) == GrabSuccess) {
             return;
@@ -318,9 +316,9 @@ static void match(void) {
     struct item *item, *lprefix, *lsubstr, *prefixend, *substrend;
 
     strcpy(buf, text);
-    /* separate input text into tokens to be matched individually */
+    /* Separate input text into tokens to be matched individually */
     for (s = strtok(buf, " "); s; tokv[tokc - 1] = s, s = strtok(NULL, " ")) {
-        if (++tokc > tokn && !(tokv = realloc(tokv, ++tokn * sizeof *tokv))) {
+        if (++tokc > tokn && !(tokv = realloc(tokv, ++tokn * sizeof(*tokv)))) {
             die("cannot realloc %zu bytes:", tokn * sizeof *tokv);
         }
     }
@@ -389,14 +387,13 @@ static void insert(const char *str, ssize_t n) {
 static size_t nextrune(int inc) {
     ssize_t n;
 
-    /* return location of next utf8 rune in the given direction (+1 or -1) */
-    for (n = cursor + inc; n + inc >= 0 && (text[n] & 0xc0) == 0x80; n += inc)
-        ;
+    /* Return location of next UTF-8 rune in the given direction (+1 or -1) */
+    for (n = cursor + inc; n + inc >= 0 && (text[n] & 0xc0) == 0x80; n += inc) ;
     return n;
 }
 
 static void movewordedge(int dir) {
-    if (dir < 0) { /* Move cursor to the start of the word*/
+    if (dir < 0) { /* Move cursor to the start of the word */
         while (cursor > 0 && strchr(worddelimiters, text[nextrune(-1)])) {
             cursor = nextrune(-1);
         }
@@ -499,8 +496,8 @@ static void keypress(XKeyEvent *ev) {
             case XK_f:
                 movewordedge(+1);
                 goto draw;
-            case XK_g: ksym = XK_Home;  break;
-            case XK_G: ksym = XK_End;   break;
+            case XK_g: ksym = XK_Home;      break;
+            case XK_G: ksym = XK_End;       break;
             case XK_h: ksym = XK_KP_Left;   break;
             case XK_j: ksym = XK_KP_Down;   break;
             case XK_k: ksym = XK_KP_Up;     break;
@@ -684,8 +681,8 @@ static void paste(void) {
 
     /* We have been given the current selection, now insert it into input */
     if (XGetWindowProperty(dpy, win, utf8, 0, (sizeof text / 4) + 1, False,
-                           utf8, &da, &di, &dl, &dl, (unsigned char **)&p)
-        == Success && p) {
+        utf8, &da, &di, &dl, &dl, (unsigned char**)&p) == Success && p)
+    {
         insert(p, (q = strchr(p, '\n')) ? q - p : (ssize_t)strlen(p));
         XFree(p);
     }
@@ -705,6 +702,7 @@ static void readstdin(void) {
                 die("cannot realloc %zu bytes:", itemsiz * sizeof(*items));
             }
         }
+
         if (line[len - 1] == '\n') {
             line[len - 1] = '\0';
         }
@@ -841,7 +839,7 @@ static void setup(void) {
     }
 
     promptw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
-    inputw = mw / 3; /* Input width: ~33% of monitor width */
+    inputw = mw / 3; /* Input width = ~33% of monitor width */
     match();
 
     /* Create menu window */
@@ -862,13 +860,15 @@ static void setup(void) {
     XSetClassHint(dpy, win, &ch);
 
     /* Input methods */
-    if ((xim = XOpenIM(dpy, NULL, NULL, NULL)) == NULL) {
+    xim = XOpenIM(dpy, NULL, NULL, NULL);
+    if (xim == NULL) {
         die("XOpenIM failed: could not open input device");
     }
 
     xic = XCreateIC(
         xim,
-        XNInputStyle, (XIMPreeditNothing | XIMStatusNothing),
+        XNInputStyle,
+        (XIMPreeditNothing | XIMStatusNothing),
         XNClientWindow,
         win, XNFocusWindow,
         win, NULL
