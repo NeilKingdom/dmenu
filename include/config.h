@@ -1,3 +1,13 @@
+enum {
+    SchemeNorm,
+    SchemeSel,
+    SchemeOut,
+    SchemeNormHighlight,
+    SchemeSelHighlight,
+    SchemeOutHighlight,
+    SchemeLast,
+};
+
 /*
     Equivallent to setting dmenu's -b option.
     Expands list from bottom of screen if set to 0.
@@ -6,12 +16,9 @@
 static int topbar = 1;
 
 /*
-    Equivallent to setting dmenu's -fn option.
-    Setting -fn on the command line overrides fonts
-    defined here. Additional fonts proceeding the
-    primary font are used as fallbacks. See my ST
-    config.def.h for more info on the specific
-    fonts that were chosen.
+    Equivallent to setting dmenu's -fn option. Setting -fn on the command line overrides fonts
+    defined here. Additional fonts following the initial font are used as fallbacks. See my ST
+    config.h for more info on the specific fonts that were chosen.
 */
 static const char *fonts[2] = {
     "Terminess Nerd Font:style=Regular:size=14",
@@ -44,6 +51,6 @@ static const char worddelimiters[] = " ";
 static unsigned int border_width = 5;
 
 // x/y offsets and window width
-static int dmx          = 0;    // Put dmenu at this x offset
-static int dmy          = 0;    // Put dmenu at this y offset (measured from the bottom if topbar is 0)
-static unsigned int dmw = 2000; // Make dmenu this wide
+static int dmx      = 0;    // Put dmenu at this x offset
+static int dmy      = 0;    // Put dmenu at this y offset (measured from the bottom if topbar is 0)
+static unsigned dmw = 2000; // Make dmenu this wide

@@ -1,4 +1,4 @@
-/* See LICENSE file for copyright and license details. */
+// See LICENSE file for copyright and license details.
 #include <ctype.h>
 #include <locale.h>
 #include <stdio.h>
@@ -18,32 +18,19 @@
 
 #include "drw.h"
 #include "util.h"
+#include "config.h"
 
-/*** Macros ***/
-
-#define INTERSECT(x,y,w,h,r)  (MAX(0, MIN((x)+(w),(r).x_org+(r).width)  - MAX((x),(r).x_org)) \
-                              * MAX(0, MIN((y)+(h),(r).y_org+(r).height) - MAX((y),(r).y_org)))
-#define LENGTH(X)             (sizeof X / sizeof X[0])
-#define TEXTW(X)              (drw_fontset_getwidth(drw, (X)) + lrpad)
-#define NUMBERSMAXDIGITS      100
-#define NUMBERSBUFSIZE        (NUMBERSMAXDIGITS * 2) + 1
-
-/*** Enums ***/
-
-/* Color schemes */
-enum {
-    SchemeNorm,
-    SchemeSel,
-    SchemeOut,
-    SchemeNormHighlight,
-    SchemeSelHighlight,
-    SchemeOutHighlight,
-    SchemeLast,
-};
+#define INTERSECT(x, y, w, h, r) (MAX(0, MIN((x) + (w), (r).x_org + (r).width) - MAX((x), (r).x_org)) \
+                                  * MAX(0, MIN((y) + (h), (r).y_org + (r).height) - MAX((y), (r).y_org)))
+#define LENGTH(X)                (sizeof X / sizeof X[0])
+#define TEXTW(X)                 (drw_fontset_getwidth(drw, (X)) + lrpad)
+#define NUMBERSMAXDIGITS         100
+#define NUMBERSBUFSIZE           (NUMBERSMAXDIGITS * 2) + 1
 
 struct item {
     char *text;
-    struct item *left, *right;
+    struct item *left;
+    struct item *right;
     int out;
 };
 
@@ -52,7 +39,7 @@ static char text[BUFSIZ] = "";
 static char *embed;
 static int bh, mw, mh;
 static int inputw = 0, promptw;
-static int lrpad; /* sum of left and right padding */
+static int lrpad;
 static size_t cursor;
 static struct item *items = NULL;
 static struct item *matches, *matchend;
@@ -66,8 +53,6 @@ static XIC xic;
 
 static Drw *drw;
 static Clr *scheme[SchemeLast];
-
-#include "config.h"
 
 static char *cistrstr(const char *s, const char *sub);
 static int (*fstrncmp)(const char *, const char *, size_t) = strncasecmp;
@@ -139,9 +124,7 @@ static char *cistrstr(const char *h, const char *n) {
     }
 
     for (; *h; ++h) {
-        for (i = 0; n[i] && tolower((unsigned char)n[i])
-            == tolower((unsigned char)h[i]); ++i)
-            ;
+        for (i = 0; n[i] && tolower((unsigned char)n[i]) == tolower((unsigned char)h[i]); ++i) ;
 
         if (n[i] == '\0') {
             return (char *)h;
@@ -420,12 +403,12 @@ static void keypress(XKeyEvent *ev) {
 
     len = XmbLookupString(xic, ev, buf, sizeof buf, &ksym, &status);
     switch (status) {
-        default:                /* XLookupNone, XBufferOverflow */
+        default:                // XLookupNone, XBufferOverflow
             return;
-        case XLookupChars:      /* Composed string from input method */
+        case XLookupChars:      // Composed string from input method
             goto insert;
         case XLookupKeySym:
-        case XLookupBoth:       /* A KeySym and a string are returned: use keysym */
+        case XLookupBoth:       // A KeySym and a string are returned: use keysym
             break;
     }
 
@@ -440,21 +423,21 @@ static void keypress(XKeyEvent *ev) {
             case XK_g: ksym = XK_Escape;    break;
             case XK_h: ksym = XK_BackSpace; break;
             case XK_i: ksym = XK_Tab;       break;
-            case XK_j: /* Fallthru */
-            case XK_J: /* Fallthru */
-            case XK_m: /* Fallthru */
+            case XK_j: // FALLTHRU
+            case XK_J: // FALLTHRU
+            case XK_m: // FALLTHRU
             case XK_M: ksym = XK_Return; ev->state &= ~ControlMask; break;
             case XK_n: ksym = XK_Down;      break;
             case XK_p: ksym = XK_Up;        break;
 
-            case XK_k: /* Delete right */
+            case XK_k: // Delete right
                 text[cursor] = '\0';
                 match();
                 break;
-            case XK_u: /* Delete left */
+            case XK_u: // Delete left
                 insert(NULL, 0 - cursor);
                 break;
-            case XK_w: /* Delete word */
+            case XK_w: // Delete word
                 while (cursor > 0 && strchr(worddelimiters, text[nextrune(-1)])) {
                     insert(NULL, nextrune(-1) - cursor);
                 }
@@ -462,7 +445,7 @@ static void keypress(XKeyEvent *ev) {
                     insert(NULL, nextrune(-1) - cursor);
                 }
                 break;
-            case XK_y: /* Paste selection */
+            case XK_y: // Paste selection
             case XK_Y:
                 XConvertSelection(
                     dpy,
@@ -496,12 +479,12 @@ static void keypress(XKeyEvent *ev) {
             case XK_f:
                 movewordedge(+1);
                 goto draw;
-            case XK_g: ksym = XK_Home;      break;
-            case XK_G: ksym = XK_End;       break;
-            case XK_h: ksym = XK_KP_Left;   break;
-            case XK_j: ksym = XK_KP_Down;   break;
-            case XK_k: ksym = XK_KP_Up;     break;
-            case XK_l: ksym = XK_KP_Right;  break;
+            case XK_g: ksym = XK_Home;     break;
+            case XK_G: ksym = XK_End;      break;
+            case XK_h: ksym = XK_KP_Left;  break;
+            case XK_j: ksym = XK_KP_Down;  break;
+            case XK_k: ksym = XK_KP_Up;    break;
+            case XK_l: ksym = XK_KP_Right; break;
             default:
                 return;
         }
@@ -520,7 +503,7 @@ static void keypress(XKeyEvent *ev) {
                 return;
             }
             cursor = nextrune(+1);
-        /* Fallthru */
+        // FALLTHRU
         case XK_BackSpace:
             if (cursor == 0) {
                 return;
@@ -534,7 +517,7 @@ static void keypress(XKeyEvent *ev) {
                 break;
             }
             if (next) {
-                /* Jump to end of list and position items in reverse */
+                // Jump to end of list and position items in reverse
                 curr = matchend;
                 calcoffsets();
                 curr = prev;
@@ -590,7 +573,7 @@ static void keypress(XKeyEvent *ev) {
             if (lines > 0) {
                 return;
             }
-        /* Fallthru */
+        // FALLTHRU
         case XK_Up:
         case XK_KP_Up:
             if (sel && sel->left && (sel = sel->left)->right == curr) {
@@ -652,7 +635,7 @@ static void keypress(XKeyEvent *ev) {
             if (lines > 0) {
                 return;
             }
-        /* Fallthru */
+        // FALLTHRU
         case XK_Down:
         case XK_KP_Down:
             if (sel && sel->right && (sel = sel->right) == next) {
@@ -679,7 +662,7 @@ static void paste(void) {
     unsigned long dl;
     Atom da;
 
-    /* We have been given the current selection, now insert it into input */
+    // We have been given the current selection, now insert it into input
     if (XGetWindowProperty(dpy, win, utf8, 0, (sizeof text / 4) + 1, False,
         utf8, &da, &di, &dl, &dl, (unsigned char**)&p) == Success && p)
     {
@@ -694,7 +677,7 @@ static void readstdin(void) {
     size_t i, junk, itemsiz = 0;
     ssize_t len;
 
-    /* Read each line from stdin and add it to the item list */
+    // Read each line from stdin and add it to the item list
     for (i = 0; (len = getline(&line, &junk, stdin)) != -1; i++) {
         if (i + 1 >= itemsiz) {
             itemsiz += 256;
@@ -708,7 +691,7 @@ static void readstdin(void) {
         }
         items[i].text = line;
         items[i].out = 0;
-        line = NULL; /* Next call of getline() allocates a new line */
+        line = NULL; // Next call of getline() allocates a new line
     }
 
     free(line);
@@ -739,7 +722,7 @@ static void run(void) {
                 }
                 break;
             case FocusIn:
-                /* Regrab focus from parent window */
+                // Regrab focus from parent window
                 if (ev.xfocus.window != win) {
                     grabfocus();
                 }
@@ -776,7 +759,7 @@ static void setup(void) {
     int a, di, n, area = 0;
 #endif
 
-    /* Init appearance */
+    // Init appearance
     for (j = 0; j < SchemeLast; j++) {
         scheme[j] = drw_scm_create(drw, colors[j], 2);
     }
@@ -784,7 +767,7 @@ static void setup(void) {
     clip = XInternAtom(dpy, "CLIPBOARD",   False);
     utf8 = XInternAtom(dpy, "UTF8_STRING", False);
 
-    /* Calculate menu geometry */
+    // Calculate menu geometry
     bh = drw->fonts->h + 2;
     lines = MAX(lines, 0);
     mh = (lines + 1) * bh;
@@ -839,10 +822,10 @@ static void setup(void) {
     }
 
     promptw = (prompt && *prompt) ? TEXTW(prompt) - lrpad / 4 : 0;
-    inputw = mw / 3; /* Input width = ~33% of monitor width */
+    inputw = mw / 3; // Input width = ~33% of monitor width
     match();
 
-    /* Create menu window */
+    // Create menu window
     swa.override_redirect = True;
     swa.background_pixel = scheme[SchemeNorm][ColBg].pixel;
     swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
@@ -859,7 +842,7 @@ static void setup(void) {
     }
     XSetClassHint(dpy, win, &ch);
 
-    /* Input methods */
+    // Input methods
     xim = XOpenIM(dpy, NULL, NULL, NULL);
     if (xim == NULL) {
         die("XOpenIM failed: could not open input device");
@@ -890,68 +873,73 @@ static void setup(void) {
 }
 
 static void usage(void) {
-    die("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
-        "					[-x xoffset] [-y yoffset] [-z width]\n"
-        "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]");
+    die(
+        "usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+        "			  [-x xoffset] [-y yoffset] [-z width] [-nb color] \n"
+        "             [-nf color] [-sb color] [-sf color] [-w windowid]"
+    );
 }
 
 int main(int argc, char **argv) {
     XWindowAttributes wa;
-    int i, fast = 0;
+    int fast = 0;
 
-    for (i = 1; i < argc; ++i) {
-        /* These options take no arguments */
-        if (!strcmp(argv[i], "-v")) {           /* Prints version information */
+    for (int i = 1; i < argc; ++i) {
+        // These options take no arguments
+
+        if (!strcmp(argv[i], "-v")) {               // Prints version information
 #ifdef VERSION
             puts("dmenu version: "VERSION);
 #else
             puts("dmenu version: N/A");
 #endif
             exit(0);
-        } else if (!strcmp(argv[i], "-b")) {    /* Appears at the bottom of the screen */
+        } else if (!strcmp(argv[i], "-b")) {        // Appears at the bottom of the screen
             topbar = 0;
-        } else if (!strcmp(argv[i], "-f")) {    /* Grabs keyboard before reading stdin */
+        } else if (!strcmp(argv[i], "-f")) {        // Grabs keyboard before reading stdin
             fast = 1;
-        } else if (!strcmp(argv[i], "-s")) {    /* Case-insensitive item matching */
+        } else if (!strcmp(argv[i], "-s")) {        // Case-insensitive item matching
             fstrncmp = strncmp;
             fstrstr = strstr;
         } else if (i + 1 == argc) {
             usage();
         }
-        /* These options take one argument */
-        else if (!strcmp(argv[i], "-g")) {      /* Number of columns in grid */
+
+        // These options take one argument
+
+        else if (!strcmp(argv[i], "-g")) {          // Number of columns in grid
             columns = atoi(argv[++i]);
             if (lines == 0) {
                 lines = 1;
             }
-        } else if (!strcmp(argv[i], "-l")) {    /* Number of lines in grid */
+        } else if (!strcmp(argv[i], "-l")) {        // Number of lines in grid
             lines = atoi(argv[++i]);
             if (columns == 0) {
                 columns = 1;
             }
-        } else if (!strcmp(argv[i], "-x")) {    /* Window x offset */
+        } else if (!strcmp(argv[i], "-x")) {        // Window x offset
             dmx = atoi(argv[++i]);
-        } else if (!strcmp(argv[i], "-y")) {    /* Window y offset (from bottom up if -b) */
+        } else if (!strcmp(argv[i], "-y")) {        // Window y offset (from bottom up if -b)
             dmy = atoi(argv[++i]);
-        } else if (!strcmp(argv[i], "-z")) {    /* Make dmenu this wide */
+        } else if (!strcmp(argv[i], "-z")) {        // Make dmenu this wide
             dmw = atoi(argv[++i]);
-        } else if (!strcmp(argv[i], "-m")) {    /* Monitor number that dmenu will appear on */
+        } else if (!strcmp(argv[i], "-m")) {        // Monitor number that dmenu will appear on *
             mon = atoi(argv[++i]);
-        } else if (!strcmp(argv[i], "-p")) {    /* Adds prompt to left of input field */
+        } else if (!strcmp(argv[i], "-p")) {        // Adds prompt to left of input field
             prompt = argv[++i];
-        } else if (!strcmp(argv[i], "-fn")) {   /* Font or font set */
+        } else if (!strcmp(argv[i], "-fn")) {       // Font or font set
             fonts[0] = argv[++i];
-        } else if (!strcmp(argv[i], "-nb")) {   /* Normal background color */
+        } else if (!strcmp(argv[i], "-nb")) {       // Normal background color
             colors[SchemeNorm][ColBg] = argv[++i];
-        } else if (!strcmp(argv[i], "-nf")) {   /* Normal foreground color */
+        } else if (!strcmp(argv[i], "-nf")) {       // Normal foreground color
             colors[SchemeNorm][ColFg] = argv[++i];
-        } else if (!strcmp(argv[i], "-sb")) {   /* Selected background color */
+        } else if (!strcmp(argv[i], "-sb")) {       // Selected background color
             colors[SchemeSel][ColBg] = argv[++i];
-        } else if (!strcmp(argv[i], "-sf")) {   /* Selected foreground color */
+        } else if (!strcmp(argv[i], "-sf")) {       // Selected foreground color
             colors[SchemeSel][ColFg] = argv[++i];
-        } else if (!strcmp(argv[i], "-w")) {    /* Embedding window id */
+        } else if (!strcmp(argv[i], "-w")) {        // Embedding window id
             embed = argv[++i];
-        } else if (!strcmp(argv[i], "-bw")) {   /* Border width */
+        } else if (!strcmp(argv[i], "-bw")) {       // Border width
             border_width = atoi(argv[++i]);
         } else {
             usage();
